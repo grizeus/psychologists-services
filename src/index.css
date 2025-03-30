@@ -11,6 +11,9 @@
   --color-sun: #fc832c;
   --color-waterloo: #191A15;
   --color-snow: #fbfbfb;
+  --color-goose: #8a8a89;
+  --color-neon-green: #38cd3e;
+  --color-smoke: #f3f3f3;
 }
 
 :root {
@@ -19,7 +22,7 @@
   font-weight: 400;
 
   color: var(--color-waterloo);
-  background-color: var(--color-snow);
+  background-color: var(--color-smoke);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
