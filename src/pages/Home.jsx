@@ -2,6 +2,7 @@ import HeroButton from "../components/HeroButton";
 import hero from "../assets/images/hero.jpg";
 import hero2x from "../assets/images/hero@2x.jpg";
 const Home = () => {
+  
   return (
     <div className="flex justify-between">
       <div className="flex flex-col items-start justify-center py-40">
