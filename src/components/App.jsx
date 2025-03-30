@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import SharedLayout from "./SharedLayout";
+import PrivateRoute from "../routes/PrivateRoute";
 
 const HomePage = lazy(() => import("../pages/Home"));
 const PsychologistsPage = lazy(() => import("../pages/Psychologists"));
@@ -14,7 +15,12 @@ function App() {
         <Route element={<SharedLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/psychologists" element={<PsychologistsPage />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route
+            path="/favorites"
+            element={
+              <PrivateRoute component={<FavoritesPage />} redirectTo="/" />
+            }
+          />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
