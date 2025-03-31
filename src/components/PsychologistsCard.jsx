@@ -6,7 +6,7 @@ const PsychologistCard = ({ doctor }) => {
   return (
     <li className="bg-snow max-w-296 rounded-3xl p-6">
       <div className="flex gap-6">
-        <div className="border-sun/20 relative flex size-30 items-center justify-center rounded-[30px] border-2">
+        <div className="border-sun/20 rounded-3xlg relative flex size-30 items-center justify-center border-2">
           <div className="size-24 overflow-hidden rounded-[15px]">
             <img
               src={doctor.avatar_url}
@@ -18,7 +18,7 @@ const PsychologistCard = ({ doctor }) => {
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-goose leading-normal">Psychologist</p>
-          <h2 className="text-2xl  leading-6 font-medium text-gray-800">
+          <h2 className="text-2xl leading-6 font-medium text-gray-800">
             {doctor.name}
           </h2>
         </div>
@@ -48,8 +48,8 @@ const PsychologistCard = ({ doctor }) => {
         </div>
       </div>
 
-      <div className="ml-36 -mt-9.5">
-        <ul className=" flex flex-col gap-2 leading-normal">
+      <div className="-mt-9.5 ml-36">
+        <ul className="flex flex-col gap-2 leading-normal">
           <ul className="flex gap-1">
             <li className="bg-smoke rounded-3xl px-4 py-2">
               <span className="text-goose">Experience :</span>{" "}
@@ -110,7 +110,7 @@ const PsychologistCard = ({ doctor }) => {
               </ul>
               <button
                 type="button"
-                className="bg-sun hover:bg-sunset text-snow focus:bg-sunset rounded-[30px] px-10 py-3.5 transition-colors duration-300 ease-in-out focus:outline-none">
+                className="bg-sun hover:bg-sunset text-snow focus:bg-sunset rounded-3xlg px-10 py-3.5 transition-colors duration-300 ease-in-out focus:outline-none">
                 Make an appointment
               </button>
             </>

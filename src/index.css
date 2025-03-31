@@ -9,11 +9,14 @@
 
 @theme {
   --color-sun: #fc832c;
+  --color-sunset: #f37113;
   --color-waterloo: #191A15;
   --color-snow: #fbfbfb;
   --color-goose: #8a8a89;
   --color-neon-green: #38cd3e;
   --color-smoke: #f3f3f3;
+  --radius-xlg: 14px;
+  --radius-3xlg: 30px;
 }
 
 :root {
