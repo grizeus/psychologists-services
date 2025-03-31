@@ -13,9 +13,9 @@ const UserBar = () => {
     <div className="flex items-center justify-center gap-7">
       <div className="flex items-center justify-center gap-3.5">
         <div className="bg-neon-green flex size-10 items-center justify-center rounded-[10px]">
-           <svg className="fill-snow size-6" >
-                      <use href={`${sprite}#icon-avatar`}></use>
-                    </svg>
+          <svg className="fill-snow size-6">
+            <use href={`${sprite}#icon-avatar`}></use>
+          </svg>
         </div>
 
         <span className="inline-block w-9 overflow-hidden leading-tight font-medium tracking-tighter text-ellipsis whitespace-nowrap">
@@ -24,7 +24,7 @@ const UserBar = () => {
       </div>
       <button
         type="button"
-        className="border-waterloo/20 hover:bg-sun hover:text-snow hover:border-sun rounded-[30px] border bg-transparent px-10 py-4.5 leading-5 font-medium transition-colors duration-300 ease-in-out"
+        className="border-waterloo/20 focus:bg-sunset focus:border-sunset focus:text-snow hover:bg-sunset hover:text-snow hover:border-sunset rounded-3xlg border bg-transparent px-10 py-4.5 leading-5 font-medium transition-colors duration-300 ease-in-out focus:outline-none"
         onClick={handleLogout}>
         Log Out
       </button>
