@@ -1,5 +1,5 @@
 import React from "react";
-
+import sprite from "src/assets/icons/sprite.svg";
 const PsychologistCard = ({ doctor }) => {
   return (
     <li className="bg-snow max-w-296 rounded-3xl p-6">
@@ -21,14 +21,28 @@ const PsychologistCard = ({ doctor }) => {
           </h2>
         </div>
         <div className="ml-auto inline-flex items-center justify-center gap-4 self-start text-base leading-6 font-medium">
-          <span className="border-r-waterloo/20 border-r pr-4">
-            Rating : {doctor.rating}
-          </span>
-          <div className="">
-            Price / 1 hour :{" "}
-            <span className="text-neon-green">{doctor.price_per_hour}$</span>
+          <div className="flex items-center gap-2">
+            <svg className="size-4 fill-current">
+              <use href={`${sprite}#icon-star`}></use>
+            </svg>
+            <span className="border-r-waterloo/20 border-r pr-4">
+              Rating : {doctor.rating}
+            </span>
           </div>
-          <button className="text-gray-500 hover:text-gray-700 focus:outline-none"></button>
+          <div className="flex items-center gap-7">
+            <p>
+              Price / 1 hour :{" "}
+              <span className="text-neon-green">{doctor.price_per_hour}$</span>
+            </p>
+            <button type="button" className="foxus:outline-none">
+              <svg
+                className="hover:fill-sun hover:stroke-sun fill-transparent stroke-current transition-colors duration-300 ease-in-out"
+                width={26}
+                height={26}>
+                <use href={`${sprite}#icon-outline-fav`}></use>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
-
+import sprite from "src/assets/icons/sprite.svg";
 const HeroButton = () => {
-  const sprite = import.meta.env.BASE_URL + "src/assets/icons/sprite.svg";
   return (
     <NavLink className="bg-sun flex items-baseline gap-4.5 rounded-[30px] px-12.5 py-4.5 text-xl leading-6 font-medium text-white">
       Get started
