@@ -3,7 +3,7 @@ import sprite from "src/assets/icons/sprite.svg";
 import { toggleFavorite } from "../zustand/operations";
 const PsychologistCard = ({ doctor }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const handleFavorite = () => {
+  const handleToggleFavorite = () => {
     toggleFavorite(doctor.id);
   };
 
@@ -43,7 +43,7 @@ const PsychologistCard = ({ doctor }) => {
             <button
               type="button"
               className="group focus:outline-none"
-              onClick={handleFavorite}>
+              onClick={handleToggleFavorite}>
               {doctor.isFavorite ? (
                 <svg
                   className="group-hover:stroke-sun group-focus:stroke-sun stroke-sun fill-sun transition-colors duration-300 ease-in-out hover:fill-transparent focus:fill-transparent"

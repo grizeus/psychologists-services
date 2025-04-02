@@ -41,6 +41,7 @@ const Psychologists = () => {
     const filteredData = applyFilter(data, curFilter);
     setFilteredData(filteredData);
   }, [data, curFilter]);
+
   return (
     <>
       <Filter />
