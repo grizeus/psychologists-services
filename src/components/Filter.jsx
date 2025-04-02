@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import sprite from "src/assets/icons/sprite.svg";
+import useStore from "../zustand/store";
+import { setFilter } from "../zustand/operations";
 
 const options = [
   "A to Z",
@@ -11,7 +13,7 @@ const options = [
   "Show all",
 ];
 const Filter = () => {
-  const [filter, setFilter] = useState("A to Z");
+  const { curFilter: filter } = useStore();
   const [isOpen, setIsOpen] = useState(false);
   const dropDownRef = useRef(null);
 
@@ -39,7 +41,7 @@ const Filter = () => {
       </span>
       <div ref={dropDownRef} className="relative w-56.5 cursor-pointer">
         <button
-          className="bg-sun w-full hover:bg-sunset focus:bg-sunset rounded-xlg flex items-center justify-between gap-8 py-3.5 pr-3.5 pl-4.5 transition-colors duration-300 ease-in-out focus:outline-none"
+          className="bg-sun hover:bg-sunset focus:bg-sunset rounded-xlg flex w-full items-center justify-between gap-8 py-3.5 pr-3.5 pl-4.5 transition-colors duration-300 ease-in-out focus:outline-none"
           onClick={toggleDropdown}>
           <div className="text-snow text-base leading-5 font-medium">
             {filter}

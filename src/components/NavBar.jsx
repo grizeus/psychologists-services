@@ -5,7 +5,7 @@ const cssBuilder = ({ isActive }) =>
 
 const NavBar = () => {
   // NOTE: replace this with authentication logic later
-  const isAuthenticated = false;
+  const isAuthenticated = true;
   return (
     <nav className="">
       <ul className="flex gap-10 leading-tight">

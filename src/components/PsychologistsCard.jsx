@@ -1,7 +1,11 @@
 import { useState } from "react";
 import sprite from "src/assets/icons/sprite.svg";
+import { toggleFavorite } from "../zustand/operations";
 const PsychologistCard = ({ doctor }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const handleFavorite = () => {
+    toggleFavorite(doctor.id);
+  };
 
   return (
     <li className="bg-snow max-w-296 rounded-3xl p-6">
@@ -36,13 +40,25 @@ const PsychologistCard = ({ doctor }) => {
               Price / 1 hour :{" "}
               <span className="text-neon-green">{doctor.price_per_hour}$</span>
             </p>
-            <button type="button" className="group focus:outline-none">
-              <svg
-                className="group-hover:stroke-sun group-focus:stroke-sun fill-transparent stroke-current transition-colors duration-300 ease-in-out"
-                width={26}
-                height={26}>
-                <use href={`${sprite}#icon-outline-fav`}></use>
-              </svg>
+            <button
+              type="button"
+              className="group focus:outline-none"
+              onClick={handleFavorite}>
+              {doctor.isFavorite ? (
+                <svg
+                  className="group-hover:stroke-sun group-focus:stroke-sun stroke-sun fill-sun transition-colors duration-300 ease-in-out hover:fill-transparent focus:fill-transparent"
+                  width={26}
+                  height={26}>
+                  <use href={`${sprite}#icon-fav`}></use>
+                </svg>
+              ) : (
+                <svg
+                  className="group-hover:stroke-sun group-focus:stroke-sun fill-transparent stroke-current transition-colors duration-300 ease-in-out"
+                  width={26}
+                  height={26}>
+                  <use href={`${sprite}#icon-outline-fav`}></use>
+                </svg>
+              )}
             </button>
           </div>
         </div>
