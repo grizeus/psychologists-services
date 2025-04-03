@@ -1,17 +1,12 @@
 import { create } from "zustand";
+import { rootSlice } from "./root/slice";
+import { psychologistsSlice } from "./psychologists/slice";
+import { favoritesSlice } from "./favorites/slice";
 
 const useStore = create(() => ({
-  curFilter: "Show all",
-  dataCollection: [],
-  favsCollection: [],
-  total: 0,
-  totalFavs: 0,
-  lastDoc: null,
-  lastFavDoc: null,
-  isMoreData: true,
-  isMoreFavData: true,
-  isLoading: false,
-  error: null,
+  ...rootSlice(),
+  ...psychologistsSlice(),
+  ...favoritesSlice(),
 }));
 
 export default useStore;

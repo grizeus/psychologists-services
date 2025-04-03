@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import sprite from "src/assets/icons/sprite.svg";
 import useStore from "../zustand/store";
-import { setFilter } from "../zustand/operations";
+import { setFilter } from "../zustand/root/operations";
 
 const options = [
   "A to Z",
@@ -13,7 +13,7 @@ const options = [
   "Show all",
 ];
 const Filter = () => {
-  const { curFilter: filter } = useStore();
+  const curFilter = useStore.getState().curFilter;
   const [isOpen, setIsOpen] = useState(false);
   const dropDownRef = useRef(null);
 
@@ -44,7 +44,7 @@ const Filter = () => {
           className="bg-sun hover:bg-sunset focus:bg-sunset rounded-xlg flex w-full items-center justify-between gap-8 py-3.5 pr-3.5 pl-4.5 transition-colors duration-300 ease-in-out focus:outline-none"
           onClick={toggleDropdown}>
           <div className="text-snow text-base leading-5 font-medium">
-            {filter}
+            {curFilter}
           </div>
           <svg
             className={`size-5 transition-transform duration-300 ease-in-out ${isOpen ? "rotate-180" : ""} stroke-snow fill-transparent`}>
@@ -58,7 +58,7 @@ const Filter = () => {
                 <div
                   key={i}
                   onClick={() => handleOptionClick(option)}
-                  className={`text-base leading-5 ${filter === option ? "text-waterloo" : "text-waterloo/20"}`}>
+                  className={`text-base leading-5 ${curFilter === option ? "text-waterloo" : "text-waterloo/20"}`}>
                   {option}
                 </div>
               ))}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import sprite from "src/assets/icons/sprite.svg";
-import { toggleFavorite } from "../zustand/operations";
+import { toggleFavorite } from "../zustand/favorites/operations";
+
 const PsychologistCard = ({ doctor }) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleToggleFavorite = () => {

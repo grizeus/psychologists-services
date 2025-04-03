@@ -10,15 +10,10 @@ import {
   where,
 } from "firebase/firestore";
 
-import useStore from "./store";
-import { db } from "../firebase/firebase";
-
-const LIMIT = 3;
-const collectionName = "psychologists";
-
-export const setFilter = filter => {
-  useStore.setState({ curFilter: filter });
-};
+import { db } from "../../firebase/firebase";
+import { COLLECTION_NAME, LIMIT } from "../../lib/utils/constants";
+import { setPostloading, setPreloading } from "../root/operations";
+import useStore from "../store";
 
 const getDataCollection = () => {
   return useStore.getState().dataCollection;
@@ -27,43 +22,9 @@ const getFavCollection = () => {
   return useStore.getState().favsCollection;
 };
 
-export const fetchCollection = async () => {
-  useStore.setState({ isLoading: true, error: null });
-  const dataCollection = getDataCollection();
-  const collectionRef = collection(db, collectionName);
-  const lastDoc = useStore.getState().lastDoc;
-  try {
-    // setup query whenever it first fetch or load more data
-    const q = lastDoc
-      ? query(collectionRef, startAfter(lastDoc), limit(LIMIT))
-      : query(collectionRef, limit(LIMIT));
-    const count = await getCountFromServer(collectionRef);
-    const snapshot = await getDocs(q);
-    if (snapshot.docs.length === 0) {
-      useStore.setState({ isMoreData: false, isLoading: false });
-      return;
-    }
-    const fetchedData = snapshot.docs.map(doc => ({
-      id: doc.id,
-      isFavorite: false,
-      ...doc.data(),
-    }));
-    const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-    useStore.setState({
-      lastDoc: lastVisible,
-      dataCollection: [...dataCollection, ...fetchedData],
-      total: count.data().count,
-      isLoading: false,
-    });
-  } catch (e) {
-    console.log(e);
-    useStore.setState({ error: e.message, loading: false });
-  }
-};
-
 export const fetchFavorites = async () => {
-  useStore.setState({ isLoading: true, error: null });
-  const collectionRef = collection(db, collectionName);
+  setPreloading();
+  const collectionRef = collection(db, COLLECTION_NAME);
   const dataCollection = getFavCollection();
   const lastDoc = useStore.getState().lastFavDoc;
   try {
@@ -80,7 +41,8 @@ export const fetchFavorites = async () => {
     );
     const snapshot = await getDocs(q);
     if (snapshot.docs.length === 0) {
-      useStore.setState({ isMoreFavData: false, isLoading: false });
+      useStore.setState({ isMoreFavData: false });
+      setPostloading();
       return;
     }
     const lastVisible = snapshot.docs[snapshot.docs.length - 1];
@@ -89,26 +51,27 @@ export const fetchFavorites = async () => {
       isFavorite: false,
       ...doc.data(),
     }));
+
     useStore.setState({
       lastFavDoc: lastVisible,
       favsCollection: [...dataCollection, ...fetchedData],
       totalFavs: count.data().count,
-      isLoading: false,
     });
+    setPostloading();
   } catch (e) {
-    console.log(e);
-    useStore.setState({ error: e.message, loading: false });
+    console.log("Error fetching favorites from Firestore:", e.message);
+    setPostloading(e);
   }
 };
 
 export const toggleFavorite = favId => {
-  useStore.setState({ isLoading: true, error: null });
+  setPreloading;
   const data = getDataCollection();
   const favs = getFavCollection();
   const curDoc =
     data.filter(item => item.id === favId)[0] ||
     favs.filter(item => item.id === favId)[0];
-  const collectionRef = collection(db, collectionName);
+  const collectionRef = collection(db, COLLECTION_NAME);
   const docRef = doc(collectionRef, favId);
   try {
     updateDoc(docRef, {
@@ -130,16 +93,17 @@ export const toggleFavorite = favId => {
       });
     }
     useStore.setState({
-      dataCollection: updatedData,
       favsCollection: updatedFavData,
-      isLoading: false,
+      dataCollection: updatedData,
     });
+    setPostloading();
   } catch (e) {
-    console.error("Error updating favorite status in Firestore:", e);
+    console.error("Error updating favorite status in Firestore:", e.message);
+    // backup in case of error
     useStore.setState({
-      error: e.message,
-      isLoading: false,
+      favsCollection: favs,
       dataCollection: data,
     });
+    setPostloading(e);
   }
 };

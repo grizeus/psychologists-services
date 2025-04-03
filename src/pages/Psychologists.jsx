@@ -2,14 +2,22 @@ import { useEffect, useState } from "react";
 
 import PsychologistCard from "../components/PsychologistsCard";
 import Filter from "../components/Filter";
-import { fetchCollection } from "../zustand/operations";
+import { fetchCollection } from "../zustand/psychologists/operations";
 import useStore from "../zustand/store";
 
 const Psychologists = () => {
-  const { dataCollection: data, isLoading, isMoreData, total, curFilter } = useStore();
+  const {
+    dataCollection: data,
+    isLoading,
+    isMoreData,
+    total,
+    curFilter,
+  } = useStore();
   const [filteredData, setFilteredData] = useState(data);
   useEffect(() => {
-    fetchCollection();
+    if (data.length === 0) {
+      fetchCollection();
+    }
   }, []);
 
   const applyFilter = (psychologists, filter) => {
@@ -23,9 +31,7 @@ const Psychologists = () => {
           .slice()
           .sort((a, b) => b.name.localeCompare(a.name));
       case "Less than 10$":
-        return psychologists
-          .slice()
-          .filter((item) => item.price_per_hour < 10);
+        return psychologists.slice().filter(item => item.price_per_hour < 10);
       case "Greater than 10$":
         return psychologists.slice().filter(item => item.price_per_hour > 10);
       case "Popular":
@@ -48,7 +54,9 @@ const Psychologists = () => {
       <ul className="mt-8 flex flex-col gap-8">
         {Array.isArray(filteredData) &&
           filteredData.length > 0 &&
-          filteredData.map(item => <PsychologistCard doctor={item} key={item.id} />)}
+          filteredData.map(item => (
+            <PsychologistCard doctor={item} key={item.id} />
+          ))}
       </ul>
       {isLoading && <div>Loading...</div>}
 
