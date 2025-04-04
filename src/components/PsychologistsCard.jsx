@@ -1,11 +1,14 @@
 import { useState } from "react";
 import sprite from "src/assets/icons/sprite.svg";
 import { toggleFavorite } from "../zustand/favorites/operations";
+import useStore from "../zustand/store";
 
 const PsychologistCard = ({ doctor }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const handleToggleFavorite = () => {
-    toggleFavorite(doctor.id);
+  const favs = useStore(state => state.generalFavsCollection);
+  console.log(favs);
+  const handleToggleFavorite = async () => {
+    await toggleFavorite(doctor.id);
   };
 
   return (
@@ -45,7 +48,7 @@ const PsychologistCard = ({ doctor }) => {
               type="button"
               className="group focus:outline-none"
               onClick={handleToggleFavorite}>
-              {doctor.isFavorite ? (
+              {favs.some(item => item.favId === doctor.id) ? (
                 <svg
                   className="group-hover:stroke-sun group-focus:stroke-sun stroke-sun fill-sun transition-colors duration-300 ease-in-out hover:fill-transparent focus:fill-transparent"
                   width={26}

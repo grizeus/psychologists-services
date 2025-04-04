@@ -1,9 +1,10 @@
+import useStore from "../zustand/store";
 import AuthBar from "./AuthBar";
 import NavBar from "./NavBar";
 import UserBar from "./UserBAr";
 
 const Header = () => {
-  const isAuthenticated = false;
+  const user = useStore(state => state.user);
   return (
     <header className="w-full border-b border-waterloo/10">
       <div className="mx-auto flex max-w-360 items-center justify-between px-32 py-6 sm:min-w-80">
@@ -14,7 +15,7 @@ const Header = () => {
         </p>
 
         <NavBar />
-        {isAuthenticated ? <UserBar /> : <AuthBar />}
+        {user ? <UserBar /> : <AuthBar />}
       </div>
     </header>
   );

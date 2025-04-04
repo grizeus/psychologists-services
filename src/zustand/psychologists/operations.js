@@ -31,9 +31,9 @@ export const fetchCollection = async () => {
     }
     const fetchedData = snapshot.docs.map(doc => ({
       id: doc.id,
-      isFavorite: false,
       ...doc.data(),
     }));
+
     const lastVisible = snapshot.docs[snapshot.docs.length - 1];
     useStore.setState({
       lastDoc: lastVisible,

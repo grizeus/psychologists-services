@@ -1,61 +1,77 @@
 import {
+  addDoc,
   collection,
+  deleteDoc,
   doc,
-  getCountFromServer,
   getDocs,
   limit,
   query,
   startAfter,
-  updateDoc,
   where,
 } from "firebase/firestore";
 
-import { db } from "../../firebase/firebase";
-import { COLLECTION_NAME, LIMIT } from "../../lib/utils/constants";
+import { auth, db } from "../../firebase/firebase";
+import { COLLECTION_NAME, FAV_COLLECTION_NAME, LIMIT } from "../../lib/utils/constants";
 import { setPostloading, setPreloading } from "../root/operations";
 import useStore from "../store";
 
-const getDataCollection = () => {
-  return useStore.getState().dataCollection;
-};
 const getFavCollection = () => {
   return useStore.getState().favsCollection;
 };
 
 export const fetchFavorites = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    console.error("User is not authenticated");
+    return;
+  }
   setPreloading();
+  const favCollectionRef = collection(db, FAV_COLLECTION_NAME);
   const collectionRef = collection(db, COLLECTION_NAME);
   const dataCollection = getFavCollection();
   const lastDoc = useStore.getState().lastFavDoc;
+  const actualFavs = useStore.getState().actualFavs;
   try {
-    const q = lastDoc
+    const favQ = lastDoc
       ? query(
-          collectionRef,
+          favCollectionRef,
           startAfter(lastDoc),
-          where("isFavorite", "==", true),
+          where("userId", "==", user.uid),
           limit(LIMIT)
         )
-      : query(collectionRef, where("isFavorite", "==", true), limit(LIMIT));
-    const count = await getCountFromServer(
-      query(collectionRef, where("isFavorite", "==", true))
-    );
-    const snapshot = await getDocs(q);
-    if (snapshot.docs.length === 0) {
-      useStore.setState({ isMoreFavData: false });
-      setPostloading();
-      return;
+      : query(favCollectionRef, where("userId", "==", user.uid), limit(LIMIT));
+
+      const snapshot = await getDocs(favQ);
+      if (snapshot.docs.length === 0) {
+        useStore.setState({ isMoreFavData: false });
+        setPostloading();
+        return;
+      }
+      
+      const lastVisible = snapshot.docs[snapshot.docs.length - 1];
+      const fetchedData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    
+    const filtered = fetchedData.map(item => item.favId);
+    console.log("filtered", filtered);
+      const actualQ = query(collectionRef, where("id", "in", filtered));
+      const actualSnapshot = await getDocs(actualQ);
+      if (actualSnapshot.docs.length === 0) { 
+        console.error("No documents found in the actual collection for the given favId.");
+        setPostloading();
     }
-    const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-    const fetchedData = snapshot.docs.map(doc => ({
+    
+    const actualData = actualSnapshot.docs.map(doc => ({
       id: doc.id,
-      isFavorite: false,
       ...doc.data(),
     }));
-
+      
     useStore.setState({
       lastFavDoc: lastVisible,
       favsCollection: [...dataCollection, ...fetchedData],
-      totalFavs: count.data().count,
+      actualFavs: [...actualFavs, ...actualData],
     });
     setPostloading();
   } catch (e) {
@@ -64,46 +80,97 @@ export const fetchFavorites = async () => {
   }
 };
 
-export const toggleFavorite = favId => {
-  setPreloading;
-  const data = getDataCollection();
-  const favs = getFavCollection();
-  const curDoc =
-    data.filter(item => item.id === favId)[0] ||
-    favs.filter(item => item.id === favId)[0];
-  const collectionRef = collection(db, COLLECTION_NAME);
-  const docRef = doc(collectionRef, favId);
+export const fetchAllFavorites = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    console.error("User is not authenticated");
+    return;
+  }
+  setPreloading();
+  const collectionRef = collection(db, FAV_COLLECTION_NAME);
   try {
-    updateDoc(docRef, {
-      isFavorite: !curDoc.isFavorite,
-    });
-    const updatedData = data.map(item => {
-      return item.id === favId
-        ? { ...item, isFavorite: !item.isFavorite }
-        : item;
-    });
-    let updatedFavData;
-    if (curDoc.isFavorite) {
-      updatedFavData = favs.filter(item => item.id !== favId);
-    } else {
-      updatedFavData = favs.map(item => {
-        return item.id === favId
-          ? { ...item, isFavorite: !item.isFavorite }
-          : item;
-      });
+    const q = query(collectionRef, where("userId", "==", user.uid));
+    const snapshot = await getDocs(q);
+    if (snapshot.docs.length === 0) {
+      useStore.setState({ isMoreFavData: false });
+      setPostloading();
+      return;
     }
+    const fetchedData = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     useStore.setState({
-      favsCollection: updatedFavData,
-      dataCollection: updatedData,
+      generalFavsCollection: fetchedData,
+      totalFavs: fetchedData.length,
     });
     setPostloading();
   } catch (e) {
-    console.error("Error updating favorite status in Firestore:", e.message);
-    // backup in case of error
-    useStore.setState({
-      favsCollection: favs,
-      dataCollection: data,
-    });
+    console.log("Error fetching favorites from Firestore:", e.message);
     setPostloading(e);
+  }
+};
+
+export const toggleFavorite = async favId => {
+  const user = auth.currentUser;
+  if (!user) {
+    console.error("User is not authenticated");
+    return null;
+  }
+  const favs = getFavCollection();
+  const generalFavs = useStore.getState().generalFavsCollection;
+  const actualFavs = useStore.getState().actualFavs;
+
+  const q = query(
+    collection(db, FAV_COLLECTION_NAME),
+    where("userId", "==", user.uid),
+    where("favId", "==", favId),
+    limit(1)
+  );
+  try {
+    setPreloading();
+
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      const target = snapshot.docs[0];
+      
+      await deleteDoc(doc(db, FAV_COLLECTION_NAME, target.id));
+
+      const updatedFavData = favs.filter(item => item.favId !== favId);
+      const updatedGeneralFavData = generalFavs.filter(
+        item => item.favId !== favId
+      );
+      const updatedActualFavs = actualFavs.filter(
+        item => item.id !== favId
+      );
+
+      useStore.setState({
+        favsCollection: updatedFavData,
+        generalFavsCollection: updatedGeneralFavData,
+        actualFavs: updatedActualFavs,
+      });
+      setPostloading();
+      return {
+        status: "removed",
+      };
+    } else {
+      const res = await addDoc(collection(db, FAV_COLLECTION_NAME), {
+        userId: user.uid,
+        favId: favId,
+      });
+      useStore.setState({
+        favsCollection: [...favs, { userId: user.uid, favId: favId }],
+        generalFavsCollection: [
+          ...generalFavs,
+          { userId: user.uid, favId: favId },
+        ],
+      });
+      setPostloading();
+      return { status: "added", id: res.id };
+    }
+  } catch (e) {
+    console.error("Error toggling favorite:", e.message);
+    setPostloading(e);
+    return null;
   }
 };

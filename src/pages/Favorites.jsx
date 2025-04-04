@@ -6,14 +6,13 @@ import Filter from "../components/Filter";
 
 const Favorites = () => {
   const {
-    favsCollection: data,
+    actualFavs: data,
     isLoading,
     isMoreFavData,
     totalFavs,
     curFilter,
   } = useStore();
   const [filteredData, setFilteredData] = useState(data);
-
   useEffect(() => {
     if (data.length === 0) {
       fetchFavorites();

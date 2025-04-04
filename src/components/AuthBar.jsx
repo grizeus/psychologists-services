@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import SignInForm from "./SignInForm";
+import Button from "./Button";
+import SignUpForm from "./SignUpForm";
 
 const AuthBar = () => {
   const [isOpenLogIn, setIsOpenLogIn] = useState(false);
@@ -23,12 +25,12 @@ const AuthBar = () => {
           </button>
         </li>
         <li>
-          <button
+          <Button
+            label="Registration"
             type="button"
             onClick={() => setIsOpenReg(true)}
-            className="bg-sun hover:bg-sunset text-snow focus:bg-sunset rounded-3xlg px-10 py-3.5 transition-colors duration-300 ease-in-out focus:outline-none">
-            Registration
-          </button>
+            className={"px-10 py-3.5"}
+          />
         </li>
       </ul>
       {isOpenLogIn && (
@@ -38,7 +40,7 @@ const AuthBar = () => {
       )}
       {isOpenReg && (
         <Modal onClose={handleCloseReg}>
-          <span className="text-waterloo text-lg"> hello modal</span>
+          <SignUpForm onSuccess={handleCloseReg} />
         </Modal>
       )}
     </>

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import sprite from "../assets/icons/sprite.svg";
+import sprite from "src/assets/icons/sprite.svg";
 
 const Modal = ({ onClose, children }) => {
   const modalRoot = document.querySelector("#modal-root");
@@ -36,8 +36,11 @@ const Modal = ({ onClose, children }) => {
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 flex size-8 items-center justify-center bg-transparent focus:outline-none">
-          <svg className="fill-current stroke-current" width={16} height={16}>
+          className="group absolute top-5 right-5 flex size-8 items-center justify-center bg-transparent focus:outline-none">
+          <svg
+            className="stroke-waterloo group-hover:stroke-sunset transition-colors duration-300 ease-in-out"
+            width={16}
+            height={16}>
             <use href={`${sprite}#icon-cross`}></use>
           </svg>
         </button>

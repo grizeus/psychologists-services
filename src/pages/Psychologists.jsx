@@ -4,6 +4,7 @@ import PsychologistCard from "../components/PsychologistsCard";
 import Filter from "../components/Filter";
 import { fetchCollection } from "../zustand/psychologists/operations";
 import useStore from "../zustand/store";
+import { fetchAllFavorites } from "../zustand/favorites/operations";
 
 const Psychologists = () => {
   const {
@@ -17,6 +18,7 @@ const Psychologists = () => {
   useEffect(() => {
     if (data.length === 0) {
       fetchCollection();
+      fetchAllFavorites();
     }
   }, []);
 

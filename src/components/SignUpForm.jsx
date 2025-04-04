@@ -3,16 +3,21 @@ import { emailRegExp } from "../lib/utils/constants";
 import { useForm } from "react-hook-form";
 import { useYupValidationResolver } from "../lib/utils/validationResolver";
 import { useState } from "react";
-import { loginUser } from "../zustand/auth/operations";
+import { registerUser } from "../zustand/auth/operations";
 import sprite from "src/assets/icons/sprite.svg";
 import Button from "./Button";
 
-const SignInForm = ({ onSuccess }) => {
+const SignUpForm = ({ onSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
+
   const validationSchema = Yup.object({
+    name: Yup.string()
+      .required("Name is required")
+      .min(2, "Too Short!")
+      .max(25, "Too Long!"),
     email: Yup.string()
       .matches(emailRegExp, "Email is not valid")
       .required("Email is required"),
@@ -31,21 +36,40 @@ const SignInForm = ({ onSuccess }) => {
   });
 
   const onSubmit = async data => {
-    await loginUser(data);
+    await registerUser(data);
     onSuccess();
   };
 
   return (
     <div className="max-w-110">
       <div className="mb-5">
-        <h3 className="mb-5 text-[40px] leading-12 font-medium">Log In</h3>
+        <h3 className="mb-5 text-[40px] leading-12 font-medium">
+          Registration
+        </h3>
         <p className="text-waterloo/50">
-          Welcome back! Please enter your credentials to access your account and
-          continue your search for a psychologist.
+          Thank you for your interest in our platform! In order to register, we
+          need some information. Please provide us with the following
+          information.
         </p>
       </div>
 
       <form className="flex flex-col gap-4.5" onSubmit={handleSubmit(onSubmit)}>
+        <>
+          <label htmlFor="name" className="hidden">
+            Name
+          </label>
+          <input
+            id="name"
+            {...register("name")}
+            placeholder="Name"
+            className="border-waterloo/10 placeholder:text-waterloo w-full rounded-xl border px-4.5 py-4 text-base focus:outline-none"
+          />
+          {errors.email && (
+            <p className="absolute right-2 bottom-0.5 text-xs text-red-500">
+              {errors.name.message}
+            </p>
+          )}
+        </>
         <>
           <label htmlFor="email" className="hidden">
             Email
@@ -89,10 +113,10 @@ const SignInForm = ({ onSuccess }) => {
             </p>
           )}
         </div>
-        <Button type="submit" label="Log In" className="px-12.5 py-4.5" />
+        <Button type="submit" label="Log Up" className="px-12.5 py-4.5" />
       </form>
     </div>
   );
 };
 
-export default SignInForm;
+export default SignUpForm;
