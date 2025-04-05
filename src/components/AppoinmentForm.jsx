@@ -6,7 +6,6 @@ import { Controller, useForm } from "react-hook-form";
 import TimePicker from "./TimePicker";
 
 const AppoinmentForm = ({ onSuccess, doctor }) => {
-  
   const validationSchema = Yup.object({
     name: Yup.string()
       .required("Name is required")
@@ -18,7 +17,10 @@ const AppoinmentForm = ({ onSuccess, doctor }) => {
     phone: Yup.string()
       .required("Phone number is required")
       .matches(/^\+380\d{9}$/, "Put a valid phone number"),
-    comment: Yup.string().max(160, "Too long!"),
+    comment: Yup.string()
+      .required("Comment is required")
+      .min(2, "Too short!")
+      .max(160, "Too long!"),
   });
 
   const resolver = useYupValidationResolver(validationSchema);
@@ -168,7 +170,6 @@ const AppoinmentForm = ({ onSuccess, doctor }) => {
           <Button type="submit" label="Send" className="px-12.5 py-4.5" />
         </form>
       </div>
-      
     </>
   );
 };

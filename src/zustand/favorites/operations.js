@@ -55,7 +55,6 @@ export const fetchFavorites = async () => {
       }));
     
     const filtered = fetchedData.map(item => item.favId);
-    console.log("filtered", filtered);
       const actualQ = query(collectionRef, where("id", "in", filtered));
       const actualSnapshot = await getDocs(actualQ);
       if (actualSnapshot.docs.length === 0) { 
@@ -75,7 +74,7 @@ export const fetchFavorites = async () => {
     });
     setPostloading();
   } catch (e) {
-    console.log("Error fetching favorites from Firestore:", e.message);
+    console.error("Error fetching favorites from Firestore:", e.message);
     setPostloading(e);
   }
 };
@@ -106,7 +105,7 @@ export const fetchAllFavorites = async () => {
     });
     setPostloading();
   } catch (e) {
-    console.log("Error fetching favorites from Firestore:", e.message);
+    console.error("Error fetching favorites from Firestore:", e.message);
     setPostloading(e);
   }
 };

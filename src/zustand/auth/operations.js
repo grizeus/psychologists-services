@@ -24,7 +24,7 @@ export const registerUser = async ({ name, email, password }) => {
     useStore.setState({ user: user });
     setPostloading();
   } catch (e) {
-    console.log("Error registering user:", e.message);
+    console.error("Error registering user:", e.message);
     setPostloading(e);
   }
 };
@@ -41,7 +41,7 @@ export const loginUser = async ({ email, password }) => {
     useStore.setState({ user: user });
     setPostloading();
   } catch (e) {
-    console.log("Error logging in user:", e.message);
+    console.error("Error logging in user:", e.message);
     setPostloading(e);
   }
 };
@@ -61,7 +61,7 @@ export const logoutUser = async () => {
     });
     setPostloading();
   } catch (e) {
-    console.log("Error logging out user:", e.message);
+    console.error("Error logging out user:", e.message);
     setPostloading(e);
   }
 };

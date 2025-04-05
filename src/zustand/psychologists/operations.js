@@ -42,7 +42,7 @@ export const fetchCollection = async () => {
     });
     setPostloading();
   } catch (e) {
-    console.log(e);
+    console.error("Error fetching psychologists from Firestore:", e.message);
     setPostloading(e);
   }
 };
