@@ -38,5 +38,9 @@
       <path stroke-width="2.5" stroke-miterlimit="4" stroke-linecap="round" stroke-linejoin="round" d="M24 8l-16 16"></path>
       <path stroke-width="2.5" stroke-miterlimit="4" stroke-linecap="round" stroke-linejoin="round" d="M8 8l16 16"></path>
     </symbol>
+    <symbol id="icon-clock" viewBox="0 0 32 32">
+      <path stroke-width="2.4" stroke-miterlimit="4" stroke-linecap="butt" stroke-linejoin="round" d="M16 29.328c-7.376 0-13.344-5.968-13.344-13.344 0-7.36 5.968-13.328 13.344-13.328 7.36 0 13.328 5.968 13.328 13.328 0 7.376-5.968 13.344-13.328 13.344z"></path>
+      <path stroke-width="2.4" stroke-miterlimit="4" stroke-linecap="round" stroke-linejoin="round" d="M16 8v8l5.328 2.656"></path>
+    </symbol>
   </defs>
 </svg>

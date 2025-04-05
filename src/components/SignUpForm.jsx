@@ -16,8 +16,8 @@ const SignUpForm = ({ onSuccess }) => {
   const validationSchema = Yup.object({
     name: Yup.string()
       .required("Name is required")
-      .min(2, "Too Short!")
-      .max(25, "Too Long!"),
+      .min(2, "Too short!")
+      .max(25, "Too long!"),
     email: Yup.string()
       .matches(emailRegExp, "Email is not valid")
       .required("Email is required"),
@@ -54,7 +54,7 @@ const SignUpForm = ({ onSuccess }) => {
       </div>
 
       <form className="flex flex-col gap-4.5" onSubmit={handleSubmit(onSubmit)}>
-        <>
+        <div className="relative">
           <label htmlFor="name" className="hidden">
             Name
           </label>
@@ -69,8 +69,8 @@ const SignUpForm = ({ onSuccess }) => {
               {errors.name.message}
             </p>
           )}
-        </>
-        <>
+        </div>
+        <div className="relative">
           <label htmlFor="email" className="hidden">
             Email
           </label>
@@ -85,7 +85,7 @@ const SignUpForm = ({ onSuccess }) => {
               {errors.email.message}
             </p>
           )}
-        </>
+        </div>
         <div className="relative">
           <label htmlFor="password" className="hidden">
             Password

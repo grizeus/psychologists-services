@@ -46,7 +46,7 @@ const SignInForm = ({ onSuccess }) => {
       </div>
 
       <form className="flex flex-col gap-4.5" onSubmit={handleSubmit(onSubmit)}>
-        <>
+        <div className="relative">
           <label htmlFor="email" className="hidden">
             Email
           </label>
@@ -61,7 +61,7 @@ const SignInForm = ({ onSuccess }) => {
               {errors.email.message}
             </p>
           )}
-        </>
+        </div>
         <div className="relative">
           <label htmlFor="password" className="hidden">
             Password
