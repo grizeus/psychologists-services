@@ -143,10 +143,11 @@ export const toggleFavorite = async favId => {
       const updatedActualFavs = actualFavs.filter(
         item => item.id !== favId
       );
-
+      
       useStore.setState({
         favsCollection: updatedFavData,
         generalFavsCollection: updatedGeneralFavData,
+        totalFavs: updatedGeneralFavData.length,
         actualFavs: updatedActualFavs,
       });
       setPostloading();
@@ -164,6 +165,7 @@ export const toggleFavorite = async favId => {
           ...generalFavs,
           { userId: user.uid, favId: favId },
         ],
+        totalFavs: generalFavs.length + 1,
       });
       setPostloading();
       return { status: "added", id: res.id };
