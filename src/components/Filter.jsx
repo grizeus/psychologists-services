@@ -33,6 +33,7 @@ const Filter = () => {
 
   const handleOptionClick = option => {
     setFilter(option);
+    setIsOpen(false);
   };
   return (
     <>

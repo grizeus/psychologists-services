@@ -7,20 +7,22 @@ import useStore from "../zustand/store";
 import { fetchAllFavorites } from "../zustand/favorites/operations";
 
 const Psychologists = () => {
-  const {
-    dataCollection: data,
-    isLoading,
-    isMoreData,
-    total,
-    curFilter,
-  } = useStore();
-  const [filteredData, setFilteredData] = useState(data);
+  const user = useStore(state => state.user);
+  const isLoading = useStore(state => state.isLoading);
+  const isMoreData = useStore(state => state.isMoreData);
+  const total = useStore(state => state.total);
+  const curFilter = useStore(state => state.curFilter);
+  const dataCollection = useStore(state => state.dataCollection);
+  const generalFavs = useStore(state => state.generalFavsCollection);
+  const [filteredData, setFilteredData] = useState(dataCollection);
   useEffect(() => {
-    if (data.length === 0) {
+    if (dataCollection.length === 0) {
       fetchCollection();
+    }
+    if (generalFavs.length === 0) {
       fetchAllFavorites();
     }
-  }, []);
+  }, [user]);
 
   const applyFilter = (psychologists, filter) => {
     switch (filter) {
@@ -46,9 +48,9 @@ const Psychologists = () => {
   };
 
   useEffect(() => {
-    const filteredData = applyFilter(data, curFilter);
+    const filteredData = applyFilter(dataCollection, curFilter);
     setFilteredData(filteredData);
-  }, [data, curFilter]);
+  }, [dataCollection, curFilter]);
 
   return (
     <>

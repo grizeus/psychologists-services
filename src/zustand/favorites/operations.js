@@ -115,7 +115,6 @@ export const toggleFavorite = async favId => {
   const user = auth.currentUser;
   if (!user) {
     console.error("User is not authenticated");
-    return null;
   }
   const favs = getFavCollection();
   const generalFavs = useStore.getState().generalFavsCollection;
@@ -151,11 +150,9 @@ export const toggleFavorite = async favId => {
         actualFavs: updatedActualFavs,
       });
       setPostloading();
-      return {
-        status: "removed",
-      };
+      
     } else {
-      const res = await addDoc(collection(db, FAV_COLLECTION_NAME), {
+      await addDoc(collection(db, FAV_COLLECTION_NAME), {
         userId: user.uid,
         favId: favId,
       });
@@ -168,11 +165,9 @@ export const toggleFavorite = async favId => {
         totalFavs: generalFavs.length + 1,
       });
       setPostloading();
-      return { status: "added", id: res.id };
     }
   } catch (e) {
     console.error("Error toggling favorite:", e.message);
     setPostloading(e);
-    return null;
   }
 };
