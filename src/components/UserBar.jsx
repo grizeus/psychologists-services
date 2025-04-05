@@ -16,7 +16,7 @@ const UserBar = () => {
           </svg>
         </div>
 
-        <span className="inline-block w-9 overflow-hidden leading-tight font-medium tracking-tighter text-ellipsis whitespace-nowrap">
+        <span className="inline-block w-11 overflow-hidden leading-tight font-medium -tracking-wider text-ellipsis whitespace-nowrap">
           {user?.displayName}
         </span>
       </div>
