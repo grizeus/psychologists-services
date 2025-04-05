@@ -1,11 +1,11 @@
 import { NavLink } from "react-router-dom";
+import useStore from "../zustand/store";
 
 const cssBuilder = ({ isActive }) =>
   ` ${isActive && "after:bg-sun after:absolute after:top-6 after:left-1/2 after:size-2 after:-translate-x-1/2 after:rounded-full after:content-['']"} relative`;
 
 const NavBar = () => {
-  // NOTE: replace this with authentication logic later
-  const isAuthenticated = true;
+  const user = useStore(state => state.user);
   return (
     <nav className="">
       <ul className="flex gap-10 leading-tight">
@@ -19,7 +19,7 @@ const NavBar = () => {
             Psychologists
           </NavLink>
         </li>
-        {isAuthenticated && (
+        {user && (
         <li>
           <NavLink to="/favorites" className={cssBuilder}>
             Favorites

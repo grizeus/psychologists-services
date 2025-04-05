@@ -1,15 +1,13 @@
 import sprite from "src/assets/icons/sprite.svg";
+import { logoutUser } from "../zustand/auth/operations";
+import useStore from "../zustand/store";
 
 const UserBar = () => {
-  const user = {
-    displayName: "John",
-    email: "john.doe@example.com",
+  const user = useStore(state => state.user);
+  const handleLogout = async () => {
+    await logoutUser();
   };
-  const handleLogout = () => {
-    // TODO: implement logout logic
-    console.log("logout");
-  };
-  return (
+  return  (
     <div className="flex items-center justify-center gap-7">
       <div className="flex items-center justify-center gap-3.5">
         <div className="bg-neon-green flex size-10 items-center justify-center rounded-[10px]">
@@ -19,7 +17,7 @@ const UserBar = () => {
         </div>
 
         <span className="inline-block w-9 overflow-hidden leading-tight font-medium tracking-tighter text-ellipsis whitespace-nowrap">
-          {user.displayName}
+          {user?.displayName}
         </span>
       </div>
       <button

@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import useStore from "../zustand/store";
-import { fetchFavorites } from "../zustand/operations";
+import { fetchFavorites } from "../zustand/favorites/operations";
 import PsychologistCard from "../components/PsychologistsCard";
 import Filter from "../components/Filter";
 
 const Favorites = () => {
   const {
-    favsCollection: data,
+    actualFavs: data,
     isLoading,
     isMoreFavData,
     totalFavs,
     curFilter,
   } = useStore();
   const [filteredData, setFilteredData] = useState(data);
-
   useEffect(() => {
-    fetchFavorites();
+    if (data.length === 0) {
+      fetchFavorites();
+    }
   }, []);
 
   const applyFilter = (psychologists, filter) => {
