@@ -3,7 +3,7 @@ import Button from "./Button";
 import { emailRegExp } from "../lib/utils/constants";
 import { useYupValidationResolver } from "../lib/utils/validationResolver";
 import { Controller, useForm } from "react-hook-form";
-import TimePicker from "./TimeSelect";
+import TimePicker from "./TimePicker";
 
 const AppoinmentForm = ({ onSuccess, doctor }) => {
   
