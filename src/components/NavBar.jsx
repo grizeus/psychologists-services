@@ -8,7 +8,7 @@ const NavBar = () => {
   const user = useStore(state => state.user);
   return (
     <nav className="">
-      <ul className="flex gap-10 leading-tight">
+      <ul className="flex gap-4 lg:gap-10 lg:text-base lg:leading-tight text-sm leading-4"> 
         <li>
           <NavLink to="/" className={cssBuilder}>
             Home
