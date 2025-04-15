@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import sprite from "src/assets/icons/sprite.svg";
 import useStore from "../zustand/store";
-import { setFilter } from "../zustand/root/operations";
+import { setFilter } from "../zustand/filter/operations";
 
 const options = [
   "A to Z",

@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { rootSlice } from "./root/slice";
-import { psychologistsSlice } from "./psychologists/slice";
+import { filterSlice } from "./filter/slice";
 import { favoritesSlice } from "./favorites/slice";
 import { authSlice } from "./auth/slice";
 import { persist } from "zustand/middleware";
@@ -8,15 +7,15 @@ import { persist } from "zustand/middleware";
 const useStore = create(
   persist(
     (set, get) => ({
-      ...rootSlice(set, get),
-      ...psychologistsSlice(set, get),
+      ...filterSlice(set, get),
       ...favoritesSlice(set, get),
       ...authSlice(set, get),
     }),
     {
-      name: "auth-storage",
+      name: "persist-storage",
       partialize: state => ({
         user: state.user,
+        favorites: state.favorites,
       }),
     }
   )

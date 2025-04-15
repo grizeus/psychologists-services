@@ -7,8 +7,8 @@ const UserBar = () => {
   const handleLogout = async () => {
     await logoutUser();
   };
-  return  (
-    <div className="flex items-center justify-center gap-7">
+  return (
+    <div className="flex items-center justify-center gap-7 sm:ml-auto lg:ml-0">
       <div className="flex items-center justify-center gap-3.5">
         <div className="bg-neon-green flex size-10 items-center justify-center rounded-[10px]">
           <svg className="fill-snow size-6">

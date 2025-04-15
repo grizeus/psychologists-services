@@ -1,28 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import PsychologistCard from "../components/PsychologistsCard";
 import Filter from "../components/Filter";
-import { fetchCollection } from "../zustand/psychologists/operations";
 import useStore from "../zustand/store";
-import { fetchAllFavorites } from "../zustand/favorites/operations";
+import { psychologistQueryOptions } from "../lib/utils/query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const Psychologists = () => {
-  const user = useStore(state => state.user);
-  const isLoading = useStore(state => state.isLoading);
-  const isMoreData = useStore(state => state.isMoreData);
-  const total = useStore(state => state.total);
   const curFilter = useStore(state => state.curFilter);
-  const dataCollection = useStore(state => state.dataCollection);
-  const generalFavs = useStore(state => state.generalFavsCollection);
-  const [filteredData, setFilteredData] = useState(dataCollection);
-  useEffect(() => {
-    if (dataCollection.length === 0) {
-      fetchCollection();
-    }
-    if (generalFavs.length === 0) {
-      fetchAllFavorites();
-    }
-  }, [user]);
+
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+    isError,
+  } = useInfiniteQuery({
+    ...psychologistQueryOptions,
+    getNextPageParam: lastPage => lastPage.nextPageParam,
+  });
+
+  const allPsychologists = useMemo(
+    () => data?.pages.flatMap(page => page.data) ?? [],
+    [data]
+  );
+
+  const [filteredData, setFilteredData] = useState([]);
 
   const applyFilter = (psychologists, filter) => {
     switch (filter) {
@@ -48,9 +53,22 @@ const Psychologists = () => {
   };
 
   useEffect(() => {
-    const filteredData = applyFilter(dataCollection, curFilter);
+    const filteredData = applyFilter(allPsychologists, curFilter);
     setFilteredData(filteredData);
-  }, [dataCollection, curFilter]);
+  }, [allPsychologists, curFilter]);
+
+  if (isLoading) {
+    return <div className="p-8 text-center">Loading your favorites...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="p-8 text-center text-red-600">
+        Error loading favorites:{" "}
+        {error instanceof Error ? error.message : "Unknown error"}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -64,12 +82,13 @@ const Psychologists = () => {
       </ul>
       {isLoading && <div>Loading...</div>}
 
-      {isMoreData && filteredData.length > 0 && filteredData.length < total && (
+      {hasNextPage && (
         <div className="flex justify-center pt-16 pb-25">
           <button
             type="button"
             className="text-snow rounded-3xlg hover:bg-sunset focus:bg-sunset bg-sun px-12 py-3.5 text-base leading-tight font-medium transition-colors duration-300 ease-in-out focus:outline-none"
-            onClick={() => fetchCollection()}>
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}>
             Load more
           </button>
         </div>

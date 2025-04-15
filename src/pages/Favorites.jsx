@@ -6,40 +6,28 @@ import { favoritesQueryOptions } from "../lib/utils/query";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 const Favorites = () => {
-  // const {
-  //   actualFavs: data,
-  //   isLoading,
-  //   isMoreFavData,
-  //   totalFavs,
-  //   curFilter,
-  // } = useStore();
   const user = useStore(state => state.user);
   const curFilter = useStore(state => state.curFilter);
   const {
-    favs,
+    data,
     error,
     fetchNextPage,
     hasNextPage,
-    isLoading, // Initial load (or when disabled and then enabled)
-    isFetchingNextPage, // Specifically for loading more pages
+    isLoading,
+    isFetchingNextPage,
     isError,
   } = useInfiniteQuery({
     ...favoritesQueryOptions,
     getNextPageParam: lastPage => lastPage.nextPageParam,
     enabled: !!user,
-  }); 
-  console.log("data", favs);
-  const allFavorites = useMemo(
-    () => favs?.pages.flatMap(page => page.data) ?? [],
-    [favs]
-  );
-  const [filteredData, setFilteredData] = useState([]);
+  });
 
-  // useEffect(() => {
-  //   if (data.length === 0) {
-  //     fetchFavorites();
-  //   }
-  // }, []);
+  const allFavorites = useMemo(
+    () => data?.pages.flatMap(page => page.data) ?? [],
+    [data]
+  );
+  
+  const [filteredData, setFilteredData] = useState([]);
 
   const applyFilter = (psychologists, filter) => {
     switch (filter) {
@@ -104,18 +92,17 @@ const Favorites = () => {
       </ul>
       {isLoading && <div>Loading...</div>}
 
-      {hasNextPage &&
-        (
-          <div className="flex justify-center pt-16 pb-25">
-            <button
-              type="button"
-              className="text-snow rounded-3xlg hover:bg-sunset focus:bg-sunset bg-sun px-12 py-3.5 text-base leading-tight font-medium transition-colors duration-300 ease-in-out focus:outline-none"
+      {hasNextPage && (
+        <div className="flex justify-center pt-16 pb-25">
+          <button
+            type="button"
+            className="text-snow rounded-3xlg hover:bg-sunset focus:bg-sunset bg-sun px-12 py-3.5 text-base leading-tight font-medium transition-colors duration-300 ease-in-out focus:outline-none"
             onClick={() => fetchNextPage()}
-          disabled={isFetchingNextPage}>
-              Load more
-            </button>
-          </div>
-        )}
+            disabled={isFetchingNextPage}>
+            Load more
+          </button>
+        </div>
+      )}
     </>
   );
 };
