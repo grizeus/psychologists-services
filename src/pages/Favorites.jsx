@@ -1,23 +1,45 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useStore from "../zustand/store";
-import { fetchFavorites } from "../zustand/favorites/operations";
 import PsychologistCard from "../components/PsychologistsCard";
 import Filter from "../components/Filter";
+import { favoritesQueryOptions } from "../lib/utils/query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 const Favorites = () => {
+  // const {
+  //   actualFavs: data,
+  //   isLoading,
+  //   isMoreFavData,
+  //   totalFavs,
+  //   curFilter,
+  // } = useStore();
+  const user = useStore(state => state.user);
+  const curFilter = useStore(state => state.curFilter);
   const {
-    actualFavs: data,
-    isLoading,
-    isMoreFavData,
-    totalFavs,
-    curFilter,
-  } = useStore();
-  const [filteredData, setFilteredData] = useState(data);
-  useEffect(() => {
-    if (data.length === 0) {
-      fetchFavorites();
-    }
-  }, []);
+    favs,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isLoading, // Initial load (or when disabled and then enabled)
+    isFetchingNextPage, // Specifically for loading more pages
+    isError,
+  } = useInfiniteQuery({
+    ...favoritesQueryOptions,
+    getNextPageParam: lastPage => lastPage.nextPageParam,
+    enabled: !!user,
+  }); 
+  console.log("data", favs);
+  const allFavorites = useMemo(
+    () => favs?.pages.flatMap(page => page.data) ?? [],
+    [favs]
+  );
+  const [filteredData, setFilteredData] = useState([]);
+
+  // useEffect(() => {
+  //   if (data.length === 0) {
+  //     fetchFavorites();
+  //   }
+  // }, []);
 
   const applyFilter = (psychologists, filter) => {
     switch (filter) {
@@ -43,9 +65,30 @@ const Favorites = () => {
   };
 
   useEffect(() => {
-    const filteredData = applyFilter(data, curFilter);
-    setFilteredData(filteredData);
-  }, [data, curFilter]);
+    const filtered = applyFilter(allFavorites, curFilter);
+    setFilteredData(filtered);
+  }, [allFavorites, curFilter]);
+
+  if (!user) {
+    return (
+      <div className="p-8 text-center">
+        Please log in to view your favorites.
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <div className="p-8 text-center">Loading your favorites...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="p-8 text-center text-red-600">
+        Error loading favorites:{" "}
+        {error instanceof Error ? error.message : "Unknown error"}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -61,14 +104,14 @@ const Favorites = () => {
       </ul>
       {isLoading && <div>Loading...</div>}
 
-      {isMoreFavData &&
-        filteredData.length > 0 &&
-        filteredData.length < totalFavs && (
+      {hasNextPage &&
+        (
           <div className="flex justify-center pt-16 pb-25">
             <button
               type="button"
               className="text-snow rounded-3xlg hover:bg-sunset focus:bg-sunset bg-sun px-12 py-3.5 text-base leading-tight font-medium transition-colors duration-300 ease-in-out focus:outline-none"
-              onClick={() => fetchFavorites()}>
+            onClick={() => fetchNextPage()}
+          disabled={isFetchingNextPage}>
               Load more
             </button>
           </div>

@@ -11,7 +11,11 @@ import {
 } from "firebase/firestore";
 
 import { auth, db } from "../../firebase/firebase";
-import { COLLECTION_NAME, FAV_COLLECTION_NAME, LIMIT } from "../../lib/utils/constants";
+import {
+  COLLECTION_NAME,
+  FAV_COLLECTION_NAME,
+  LIMIT,
+} from "../../lib/utils/constants";
 import { setPostloading, setPreloading } from "../root/operations";
 import useStore from "../store";
 
@@ -19,7 +23,7 @@ const getFavCollection = () => {
   return useStore.getState().favsCollection;
 };
 
-export const fetchFavorites = async () => {
+export const fetchFavorites = async ({ pageParam = null }) => {
   const user = auth.currentUser;
   if (!user) {
     console.error("User is not authenticated");
@@ -28,51 +32,68 @@ export const fetchFavorites = async () => {
   setPreloading();
   const favCollectionRef = collection(db, FAV_COLLECTION_NAME);
   const collectionRef = collection(db, COLLECTION_NAME);
-  const dataCollection = getFavCollection();
-  const lastDoc = useStore.getState().lastFavDoc;
-  const actualFavs = useStore.getState().actualFavs;
+
+  // const dataCollection = getFavCollection();
+  // const lastDoc = useStore.getState().lastFavDoc;
+  // const actualFavs = useStore.getState().actualFavs;
   try {
-    const favQ = lastDoc
+    const favQuery = pageParam
       ? query(
           favCollectionRef,
-          startAfter(lastDoc),
+          startAfter(pageParam),
           where("userId", "==", user.uid),
           limit(LIMIT)
         )
       : query(favCollectionRef, where("userId", "==", user.uid), limit(LIMIT));
 
-      const snapshot = await getDocs(favQ);
-      if (snapshot.docs.length === 0) {
-        useStore.setState({ isMoreFavData: false });
-        setPostloading();
-        return;
-      }
-      
-      const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-      const fetchedData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-    
-    const filtered = fetchedData.map(item => item.favId);
-      const actualQ = query(collectionRef, where("id", "in", filtered));
-      const actualSnapshot = await getDocs(actualQ);
-      if (actualSnapshot.docs.length === 0) { 
-        console.error("No documents found in the actual collection for the given favId.");
-        setPostloading();
+    const favSnapshot = await getDocs(favQuery);
+    if (favSnapshot.empty) {
+      // useStore.setState({ isMoreFavData: false });
+      // setPostloading();
+      return { favs: [], nextPageParam: undefined };
     }
-    
+
+    const lastVisibleDoc = favSnapshot.docs[favSnapshot.docs.length - 1];
+    const isLastPage = favSnapshot.docs.length < LIMIT;
+    const nextPageParam = isLastPage ? undefined : lastVisibleDoc;
+    const favoriteIds = favSnapshot.docs
+      .map(doc => doc.data().favId)
+      .filter(id => id);
+
+    if (favoriteIds.length === 0) {
+      console.log("RQ: Found favorite docs, but no valid favIds extracted.");
+      return { favs: [], nextPageParam: nextPageParam };
+    }
+
+    if (favoriteIds.length > 30) {
+      console.warn(
+        `Firestore 'in' query limit (30) exceeded. Requested ${favoriteIds.length}. Data might be incomplete. Consider reducing LIMIT or implementing batching.`
+      );
+      favoriteIds.length = 30;
+    }
+
+    // const filtered = fetchedData.map(item => item.favId);
+    const actualQuery = query(collectionRef, where("id", "in", favoriteIds));
+    const actualSnapshot = await getDocs(actualQuery);
+    if (actualSnapshot.empty) {
+      console.error(
+        "No documents found in the actual collection for the given favId."
+      );
+      return { favs: [], nextPageParam: nextPageParam };
+      // setPostloading();
+    }
+
     const actualData = actualSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     }));
-      
-    useStore.setState({
-      lastFavDoc: lastVisible,
-      favsCollection: [...dataCollection, ...fetchedData],
-      actualFavs: [...actualFavs, ...actualData],
-    });
-    setPostloading();
+    return { favs: actualData, nextPageParam: nextPageParam };
+    // useStore.setState({
+    //   lastFavDoc: lastVisibleDoc,
+    //   favsCollection: [...dataCollection, ...fetchedData],
+    //   actualFavs: [...actualFavs, ...actualData],
+    // });
+    // setPostloading();
   } catch (e) {
     console.error("Error fetching favorites from Firestore:", e.message);
     setPostloading(e);
@@ -131,17 +152,15 @@ export const toggleFavorite = async favId => {
     const snapshot = await getDocs(q);
     if (!snapshot.empty) {
       const target = snapshot.docs[0];
-      
+
       await deleteDoc(doc(db, FAV_COLLECTION_NAME, target.id));
 
       const updatedFavData = favs.filter(item => item.favId !== favId);
       const updatedGeneralFavData = generalFavs.filter(
         item => item.favId !== favId
       );
-      const updatedActualFavs = actualFavs.filter(
-        item => item.id !== favId
-      );
-      
+      const updatedActualFavs = actualFavs.filter(item => item.id !== favId);
+
       useStore.setState({
         favsCollection: updatedFavData,
         generalFavsCollection: updatedGeneralFavData,
@@ -149,7 +168,6 @@ export const toggleFavorite = async favId => {
         actualFavs: updatedActualFavs,
       });
       setPostloading();
-      
     } else {
       await addDoc(collection(db, FAV_COLLECTION_NAME), {
         userId: user.uid,
