@@ -6,7 +6,7 @@ import Footer from "./Footer";
 
 const SharedLayout = () => {
   return (
-    <div className="flex min-h-dvh flex-col ">
+    <div className="flex min-h-dvh flex-col">
       <Header />
       <main className="grow">
         <Section>

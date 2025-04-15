@@ -1,7 +1,7 @@
 const Footer = () => {
   return (
     <footer className="border-waterloo/10 mt-auto w-full border-t">
-      <div className="mx-auto flex max-w-360 items-center px-30 py-6 sm:min-w-80">
+      <div className="xs:min-w-80 mx-auto flex max-w-360 items-center px-10 py-6 md:px-29.5 lg:px-32">
         <span className="text-base">
           &copy; 2025{" "}
           <a

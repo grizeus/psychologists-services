@@ -4,24 +4,24 @@ import hero2x from "../assets/images/hero@2x.jpg";
 import sprite from "src/assets/icons/sprite.svg";
 const Home = () => {
   return (
-    <div className="flex justify-between">
-      <div className="flex flex-col items-start justify-center py-40">
-        <h1 className="mb-5 max-w-150 text-[80px] leading-[82px] font-semibold">
+    <div className="flex justify-between flex-wrap">
+      <div className="flex flex-col items-start justify-center py-20 xl:py-40">
+        <h1 className="mb-5 lg:max-w-150 text-7xl xl:text-[80px] leading-[82px] font-semibold">
           The road to the <span className="text-sun italic">depths</span> of the
           human soul
         </h1>
-        <p className="mb-10 max-w-128 text-lg leading-6">
+        <p className="mb-10 lg:max-w-128 text-lg leading-6">
           We help you to reveal your potential, overcome challenges and find a
           guide in your own life with the help of our experienced psychologists.
         </p>
         <HeroButton />
       </div>
-      <div className="relative mt-19.5 shrink-0">
+      <div className="relative xl:mt-19.5 shrink-0">
         <picture>
           <source srcSet={`${hero} 1x, ${hero2x} 2x`} />
           <img src={hero} alt="hero" />
         </picture>
-        <div className="bg-sun absolute top-83 -left-25 flex gap-4 rounded-[20px] p-8">
+        <div className="bg-sun absolute top-83 -left-10 xl:-left-25 flex gap-4 rounded-[20px] p-8">
           <div className="bg-snow rounded-xl p-3">
             <svg className="fill-sun size-7.5">
               <use href={`${sprite}#icon-check`}></use>

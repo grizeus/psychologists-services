@@ -15,12 +15,12 @@ const AuthBar = () => {
   };
   return (
     <>
-      <ul className="flex gap-2 leading-tight font-medium">
+      <ul className="flex gap-2 leading-tight font-medium sm:ml-auto lg:ml-0">
         <li>
           <button
             type="button"
             onClick={() => setIsOpenLogIn(true)}
-            className="border-waterloo/20 focus:bg-sunset focus:border-sunset hover:bg-sunset focus:text-snow hover:text-snow hover:border-sunset rounded-3xlg border px-10 py-3.5 transition-colors duration-300 ease-in-out focus:outline-none">
+            className="border-waterloo/20 focus:bg-sunset focus:border-sunset hover:bg-sunset focus:text-snow hover:text-snow hover:border-sunset rounded-3xlg border px-5 lg:px-10 py-2 lg:py-3.5 leading-5 font-medium transition-colors duration-300 ease-in-out focus:outline-none">
             Log In
           </button>
         </li>
@@ -29,7 +29,7 @@ const AuthBar = () => {
             label="Registration"
             type="button"
             onClick={() => setIsOpenReg(true)}
-            className={"px-10 py-3.5"}
+            className={"px-5 lg:px-10 py-2 lg:py-3.5"}
           />
         </li>
       </ul>
