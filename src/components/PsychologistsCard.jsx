@@ -51,7 +51,7 @@ const PsychologistCard = ({ doctor }) => {
               <span className="border-snow bg-neon-green absolute top-2 right-3 size-3 rounded-full border-2"></span>
             </div>
           </div>
-          <div className="flex w-full justify-evenly flex-col-reverse lg:flex-row lg:justify-between">
+          <div className="flex w-full justify-evenly flex-col-reverse mb-2 lg:flex-row lg:justify-between">
             {/* name */}
             <div className="flex flex-col gap-2">
               <p className="text-goose leading-normal">Psychologist</p>
